@@ -1,0 +1,86 @@
+﻿@page "/characters"
+@using System.ComponentModel.DataAnnotations
+
+<PageTitle>Seinfeld Characters</PageTitle>
+
+<section>
+    <article>
+        @if (submitted == true)
+        {
+            <p>Character submitted!</p>
+        }
+        <h2>Add Seinfeld character</h2>
+        <EditForm FormHandlerName="SeinfeldForm" Model="NewSeinfeldCharacter" OnValidSubmit="AddSeinfeldCharacter" method="post">
+            <InputText @bind-Value="NewSeinfeldCharacter.Name" />
+            <ValidationMessage For="() => NewSeinfeldCharacter.Name" />
+            <button type="submit">Add</button>
+        </EditForm>
+        <h2>Add Office character</h2>
+        <EditForm FormHandlerName="OfficeForm" Model="NewOfficeCharacter" OnValidSubmit="AddOfficeCharacter" method="post">
+            <InputText @bind-Value="NewOfficeCharacter.Name" />
+            <ValidationMessage For="() => NewOfficeCharacter.Name" />
+            <button type="submit">Add</button>
+        </EditForm>
+    </article>
+    <article>
+        <h2 id="section1">Seinfeld Characters</h2>
+        @foreach (var name in SeinfeldCharacters)
+        {
+            <ul>
+                <li>@name</li>
+            </ul>
+        }
+        <h2 id="section1">Office Characters</h2>
+        @foreach (var name in OfficeCharacters)
+        {
+            <ul>
+                <li>@name</li>
+            </ul>
+        }
+    </article>
+</section>
+
+
+@code {
+    [SupplyParameterFromForm(Name = "SeinfeldForm")]
+    public Character NewSeinfeldCharacter { get; set; } = new();
+
+    [SupplyParameterFromForm(Name = "OfficeForm")]
+    public Character NewOfficeCharacter { get; set; } = new();
+
+    private bool submitted = false;
+    private static List<string> SeinfeldCharacters = new();
+    private static List<string> OfficeCharacters = new();
+
+    protected override void OnInitialized()
+    {
+        SeinfeldCharacters = new List<string>()
+        {
+            "Jerry Seinfeld", "George Costanza"
+        };
+        OfficeCharacters = new List<string>()
+        {
+            "Jim Halpert"
+        };
+    }
+
+    void AddSeinfeldCharacter()
+    {
+        SeinfeldCharacters.Add(NewSeinfeldCharacter.Name);
+        NewSeinfeldCharacter.Name = "";
+        submitted = true;
+    }
+
+    void AddOfficeCharacter()
+    {
+        OfficeCharacters.Add(NewOfficeCharacter.Name);
+        NewOfficeCharacter.Name = "";
+        submitted = true;
+    }
+
+    public class Character
+    {
+        [Required]
+        public string Name { get; set; }
+    }
+}
